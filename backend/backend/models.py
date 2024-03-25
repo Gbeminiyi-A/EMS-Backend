@@ -1,14 +1,15 @@
 import datetime
 
+import django.utils.timezone
 from django.db import models
 
 
 class Employee(models.Model):
     name = models.CharField(max_length=500)
-    gender = models.CharField(max_length=200, default="female")
-    marital_status = models.CharField(max_length=200, default="single")
-    date_joined = models.DateTimeField(auto_created=True, default=datetime.datetime.now())
-    highest_education = models.CharField(max_length=500, default="college")
+    gender = models.CharField(max_length=200, default="Female")
+    marital_status = models.CharField(max_length=200, default="Single")
+    date_joined = models.DateTimeField(default=django.utils.timezone.now())
+    highest_education = models.CharField(max_length=500, default="College")
     skills = models.TextField(default="Python")
     manager = models.CharField(max_length=500, default="Gbeminiyi A.")
     basic_salary = models.DecimalField(max_digits=200, decimal_places=3, default=0)
@@ -34,8 +35,8 @@ class Project(models.Model):
     required_resources = models.CharField(max_length=200)
     budget = models.DecimalField(max_digits=20, decimal_places=3, default=0)
     project_manager = models.CharField(max_length=200)
-    start_date = models.DateTimeField(default=datetime.datetime.now())
-    end_date = models.DateTimeField(default=datetime.datetime.now())
+    start_date = models.DateTimeField(default=datetime.datetime.now().date())
+    end_date = models.DateTimeField(default=datetime.datetime.now().date())
 
     def __str__(self):
         return self.project_name
