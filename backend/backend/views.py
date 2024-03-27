@@ -38,7 +38,7 @@ def projectList_view(request):
 
 @api_view(['GET', 'PUT', 'DELETE'])
 def projectDetail_view(request, project_id):
-    """ Use product id to get the details of the project. If by any chance two projects have the same project id(
+    """ Use project id to get the details of the project. If by any chance two projects have the same project id(
     which should not be possible) only the first project in the db is edited and or deleted"""
     try:
         project = Projects.objects.filter(project_id=project_id)
@@ -56,7 +56,7 @@ def projectDetail_view(request, project_id):
         return JsonResponse({'Error': 'The data is not valid'})
     elif request.method == 'DELETE':
         project.delete()
-        return JsonResponse({'Project': 'Not found'})
+        return JsonResponse({'Success': 'Project Not found'})
 
 
 
@@ -94,8 +94,21 @@ def benefitslist_view(request):
 
 
 @api_view(['GET', 'PUT', 'DELETE'])
-def benefitdeatil_view(request, pk):
+def benefitdetail_view(request, pk):
     try:
-        benefit = Benefits.objects.get(pk=pk)
+        benefit = Benefits.objects.filter(pk=pk)
     except Benefits.DoesNotExist:
         return JsonResponse({"Error": "No User or Benefits with that ID"})
+
+    if request.method == 'GET':
+        serializer = BenefitsSerializer(benefit, many=True)
+        return JsonResponse({'Benefit': serializer.data})
+    elif request.method == 'PUT':
+        serializer = BenefitsSerializer(benefit.first(), data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse({'Benefit': serializer.data})
+        return JsonResponse({'Error': 'Invalid Input'})
+    elif request.method == 'DELETE':
+        benefit.delete()
+        return JsonResponse({'Success': 'Benefit has been deleted'})
