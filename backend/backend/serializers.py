@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import Employee
-from .models import Project
+from .models import Projects
 
 
 class EmployeeSerializer(serializers.ModelSerializer):
@@ -11,5 +11,5 @@ class EmployeeSerializer(serializers.ModelSerializer):
 
 class ProjectSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Project
+        model = Projects
         fields = ['project_id', 'project_name', 'client_name',]

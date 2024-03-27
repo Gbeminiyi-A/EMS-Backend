@@ -1,6 +1,6 @@
 from django.http import JsonResponse
 from .models import Employee
-from .models import Project
+from .models import Projects
 from .serializers import EmployeeSerializer
 from .serializers import ProjectSerializer
 from rest_framework.decorators import api_view
@@ -24,7 +24,7 @@ def employeeList_view(request):
 
 
 def projectList_view(request):
-    projects = Project.objects.all()
+    projects = Projects.objects.all()
     serializer = ProjectSerializer(projects, many=True)
     return JsonResponse({'projects': serializer.data})
 
