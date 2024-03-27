@@ -91,3 +91,11 @@ def benefitslist_view(request):
     if serializer.is_valid():
         serializer.save()
         return JsonResponse({'benefits': serializer.data})
+
+
+@api_view(['GET', 'PUT', 'DELETE'])
+def benefitdeatil_view(request, pk):
+    try:
+        benefit = Benefits.objects.get(pk=pk)
+    except Benefits.DoesNotExist:
+        return JsonResponse({"Error": "No User or Benefits with that ID"})
