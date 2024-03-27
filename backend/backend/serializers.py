@@ -14,7 +14,7 @@ class EmployeeSerializer(serializers.ModelSerializer):
 class ProjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = Projects
-        fields = ['project', 'project_id', 'project_name', 'project_domain', 'project_description', 'project_role',
+        fields = ['assigned_employee', 'project_id', 'project_name', 'project_domain', 'project_description', 'project_role',
                   'client_name', 'required_resources', 'budget', 'project_manager', 'start_date', 'end_date']
 
 

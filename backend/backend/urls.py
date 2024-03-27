@@ -20,6 +20,7 @@ from .views import employeeList_view
 from .views import projectList_view
 from .views import employeeDetail_view
 from .views import benefitslist_view
+from .views import projectDetail_view
 from rest_framework.urlpatterns import format_suffix_patterns
 
 urlpatterns = [
@@ -28,6 +29,7 @@ urlpatterns = [
     path('projects/', projectList_view),
     path('employees/<int:pk>/', employeeDetail_view),
     path('benefits/', benefitslist_view),
+    path('project/<int:project_id>', projectDetail_view),
 ]
 
 

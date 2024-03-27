@@ -25,6 +25,7 @@ def employeeList_view(request):
         return JsonResponse({'employees': serializer.data})
 
 
+@api_view(['GET', 'POST'])
 def projectList_view(request):
     projects = Projects.objects.all()
     serializer = ProjectSerializer(projects, many=True)
@@ -32,11 +33,23 @@ def projectList_view(request):
 
 
 @api_view(['GET', 'PUT', 'DELETE'])
+def projectDetail_view(request, project_id):
+    try:
+        project = Projects.objects.filter(project_id=project_id)
+    except Projects.DoesNotExist:
+        return JsonResponse({'Error': 'Project Not Found'}, status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'GET':
+        serializer = ProjectSerializer(project, many=True)
+        return JsonResponse({'project': serializer.data})
+
+
+@api_view(['GET', 'PUT', 'DELETE'])
 def employeeDetail_view(request, pk, format=None):
     try:
         employee = Employee.objects.get(pk=pk)
     except Employee.DoesNotExist:
-        return Response(status.HTTP_404_NOT_FOUND)
+        return Response({'error': 'Employee does not exist 😐'}, status.HTTP_404_NOT_FOUND)
     if request.method == 'GET':
         serializer = EmployeeSerializer(employee)
         return Response({'employee': serializer.data})

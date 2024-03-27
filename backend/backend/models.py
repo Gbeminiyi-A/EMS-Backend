@@ -19,8 +19,8 @@ class Employee(models.Model):
 
 
 class Projects(models.Model):
-    project = models.ManyToManyField(Employee, blank=True)
-    project_id = models.CharField(max_length=200)
+    assigned_employee = models.ManyToManyField(Employee, blank=True)
+    project_id = models.CharField(max_length=200, unique=True)
     project_name = models.CharField(max_length=500)
     project_domain = models.CharField(max_length=500, blank=True, default="")
     client_name = models.CharField(max_length=300)
