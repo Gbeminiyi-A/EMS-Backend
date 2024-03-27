@@ -1,8 +1,10 @@
 from django.http import JsonResponse
 from .models import Employee
 from .models import Projects
+from .models import Benefits
 from .serializers import EmployeeSerializer
 from .serializers import ProjectSerializer
+from .serializers import BenefitsSerializer
 from rest_framework.decorators import api_view
 from rest_framework import status
 from rest_framework.response import Response
@@ -48,3 +50,10 @@ def employeeDetail_view(request, pk, format=None):
     elif request.method == 'DELETE':
         employee.delete()
         return Response(status.HTTP_204_NO_CONTENT)
+
+
+# @api_view(['GET', 'PUT', 'DELETE'])
+def benefitslist_view(request):
+    benefits = Benefits.objects.all()
+    serializer = BenefitsSerializer(benefits, many=True)
+    return JsonResponse(data={'benefits': serializer.data}, safe=False)

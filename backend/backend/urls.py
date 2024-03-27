@@ -19,6 +19,7 @@ from django.urls import path
 from .views import employeeList_view
 from .views import projectList_view
 from .views import employeeDetail_view
+from .views import benefitslist_view
 from rest_framework.urlpatterns import format_suffix_patterns
 
 urlpatterns = [
@@ -26,6 +27,7 @@ urlpatterns = [
     path('employees/', employeeList_view),
     path('projects/', projectList_view),
     path('employees/<int:pk>/', employeeDetail_view),
+    path('benefits/', benefitslist_view),
 ]
 
 

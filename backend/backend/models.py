@@ -19,10 +19,10 @@ class Employee(models.Model):
 
 
 class Projects(models.Model):
-    project = models.ManyToManyField(Employee)
+    project = models.ManyToManyField(Employee, blank=True)
     project_id = models.CharField(max_length=200)
     project_name = models.CharField(max_length=500)
-    project_domain = models.CharField(max_length=500)
+    project_domain = models.CharField(max_length=500, blank=True, default="")
     client_name = models.CharField(max_length=300)
     project_description = models.TextField(default='')
     project_role = models.CharField(max_length=200, default="None")
@@ -37,7 +37,7 @@ class Projects(models.Model):
 
 
 class Benefits(models.Model):
-    user = models.OneToOneField(
+    user_id = models.OneToOneField(
         Employee,
         on_delete=models.PROTECT,
         primary_key=True
@@ -53,4 +53,4 @@ class Benefits(models.Model):
     gross_deduction = models.DecimalField(max_digits=200, decimal_places=3, default=0)
 
     def __str__(self):
-        return self.user
+        return self.user_id.name
