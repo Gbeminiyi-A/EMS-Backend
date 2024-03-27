@@ -27,10 +27,14 @@ def employeeList_view(request):
 
 @api_view(['GET', 'POST'])
 def projectList_view(request):
-    projects = Projects.objects.all()
-    serializer = ProjectSerializer(projects, many=True)
-    return JsonResponse({'projects': serializer.data})
-
+    if request.method == 'GET':
+        projects = Projects.objects.all()
+        serializer = ProjectSerializer(projects, many=True)
+        return JsonResponse({'projects': serializer.data})
+    serializer = ProjectSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return JsonResponse({'project': serializer.data})
 
 @api_view(['GET', 'PUT', 'DELETE'])
 def projectDetail_view(request, project_id):
@@ -50,6 +54,10 @@ def projectDetail_view(request, project_id):
             serializer.save()
             return JsonResponse({'project': serializer.data})
         return JsonResponse({'Error': 'The data is not valid'})
+    elif request.method == 'DELETE':
+        project.delete()
+        return JsonResponse({'Project': 'Not found'})
+
 
 
 @api_view(['GET', 'PUT', 'DELETE'])
