@@ -81,8 +81,13 @@ def employeeDetail_view(request, pk, format=None):
         return Response(status.HTTP_204_NO_CONTENT)
 
 
-# @api_view(['GET', 'PUT', 'DELETE'])
+@api_view(['GET', 'POST'])
 def benefitslist_view(request):
-    benefits = Benefits.objects.all()
-    serializer = BenefitsSerializer(benefits, many=True)
-    return JsonResponse(data={'benefits': serializer.data}, safe=False)
+    if request.method == 'GET':
+        benefits = Benefits.objects.all()
+        serializer = BenefitsSerializer(benefits, many=True)
+        return JsonResponse(data={'benefits': serializer.data}, safe=False)
+    serializer = BenefitsSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return JsonResponse({'benefits': serializer.data})
