@@ -4,21 +4,15 @@ from django.db import models
 
 class Employee(models.Model):
     name = models.CharField(max_length=500)
+    email = models.CharField(max_length=200, unique=True, default="@gmail.com")
     gender = models.CharField(max_length=200, default="Female")
     marital_status = models.CharField(max_length=200, default="Single")
     date_joined = models.DateTimeField(default=django.utils.timezone.now())
     highest_education = models.CharField(max_length=500, default="College")
     skills = models.TextField(default="Python")
     manager = models.CharField(max_length=500, default="Gbeminiyi A.")
-    basic_salary = models.DecimalField(max_digits=200, decimal_places=3, default=0)
-    hra_allowance = models.DecimalField(max_digits=200, decimal_places=3, default=0)
-    additional_allowance = models.DecimalField(max_digits=200, decimal_places=3, default=0)
-    professional_tax = models.DecimalField(max_digits=200, decimal_places=3, default=0)
-    medical_premium = models.DecimalField(max_digits=200, decimal_places=3, default=0)
-    income_tax = models.DecimalField(max_digits=200, decimal_places=3, default=0)
-    pf_deductions = models.DecimalField(max_digits=200, decimal_places=3, default=0)
-    gross_earning = models.DecimalField(max_digits=200, decimal_places=3, default=0)
-    gross_deduction = models.DecimalField(max_digits=200, decimal_places=3, default=0)
+    designation = models.CharField(max_length=500, default="None")
+
 
     def __str__(self):
         return self.name
@@ -38,3 +32,20 @@ class Project(models.Model):
 
     def __str__(self):
         return self.project_name
+
+
+class Benefits(models.Model):
+    user = models.OneToOneField(
+        Employee,
+        on_delete=models.PROTECT,
+        primary_key=True
+    )
+    basic_salary = models.DecimalField(max_digits=200, decimal_places=3, default=0)
+    hra_allowance = models.DecimalField(max_digits=200, decimal_places=3, default=0)
+    additional_allowance = models.DecimalField(max_digits=200, decimal_places=3, default=0)
+    professional_tax = models.DecimalField(max_digits=200, decimal_places=3, default=0)
+    medical_premium = models.DecimalField(max_digits=200, decimal_places=3, default=0)
+    income_tax = models.DecimalField(max_digits=200, decimal_places=3, default=0)
+    pf_deductions = models.DecimalField(max_digits=200, decimal_places=3, default=0)
+    gross_earning = models.DecimalField(max_digits=200, decimal_places=3, default=0)
+    gross_deduction = models.DecimalField(max_digits=200, decimal_places=3, default=0)
