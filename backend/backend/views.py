@@ -34,6 +34,8 @@ def projectList_view(request):
 
 @api_view(['GET', 'PUT', 'DELETE'])
 def projectDetail_view(request, project_id):
+    """ Use product id to get the details of the project. If by any chance two projects have the same project id(
+    which should not be possible) only the first project in the db is edited and or deleted"""
     try:
         project = Projects.objects.filter(project_id=project_id)
     except Projects.DoesNotExist:
@@ -42,6 +44,12 @@ def projectDetail_view(request, project_id):
     if request.method == 'GET':
         serializer = ProjectSerializer(project, many=True)
         return JsonResponse({'project': serializer.data})
+    elif request.method == 'PUT':
+        serializer = ProjectSerializer(project.first(), request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse({'project': serializer.data})
+        return JsonResponse({'Error': 'The data is not valid'})
 
 
 @api_view(['GET', 'PUT', 'DELETE'])
