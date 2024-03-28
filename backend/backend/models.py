@@ -16,9 +16,12 @@ ROLE = {
 
 
 class EmployeeLogin(models.Model):
-    name = models.CharField(max_length=500)
-    email = models.EmailField(unique=True)
-    password = models.CharField(max_length=200)
+    name = models.CharField(max_length=500, null=False)
+    email = models.EmailField(unique=True, null=False)
+    password = models.CharField(max_length=200, null=False)
+
+    def __str__(self):
+        return self.name
 
 
 class Employee(models.Model):

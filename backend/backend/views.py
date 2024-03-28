@@ -2,15 +2,14 @@ from django.http import JsonResponse
 from .models import Employee
 from .models import Projects
 from .models import Benefits
+from .models import EmployeeLogin
 from .serializers import EmployeeSerializer
 from .serializers import ProjectSerializer
 from .serializers import BenefitsSerializer
-from rest_framework.decorators import api_view, authentication_classes, permission_classes
+from rest_framework.decorators import api_view
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication
-from rest_framework.permissions import IsAuthenticated
-from django.contrib.auth.models import User
+from django.contrib.auth.hashers import make_password
 
 
 @api_view(['GET', 'POST'])
@@ -39,6 +38,7 @@ def projectList_view(request):
         serializer.save()
         return JsonResponse({'project': serializer.data})
 
+
 @api_view(['GET', 'PUT', 'DELETE'])
 def projectDetail_view(request, project_id):
     """ Use project id to get the details of the project. If by any chance two projects have the same project id(
@@ -60,7 +60,6 @@ def projectDetail_view(request, project_id):
     elif request.method == 'DELETE':
         project.delete()
         return JsonResponse({'Success': 'Project Not found'})
-
 
 
 @api_view(['GET', 'PUT', 'DELETE'])
@@ -85,8 +84,6 @@ def employeeDetail_view(request, pk, format=None):
 
 
 @api_view(['GET', 'POST'])
-@authentication_classes([SessionAuthentication, BasicAuthentication])
-@permission_classes([IsAuthenticated])
 def benefitslist_view(request):
     if request.method == 'GET':
         benefits = Benefits.objects.all()
@@ -120,7 +117,12 @@ def benefitdetail_view(request, pk):
 
 
 def createUser(request):
-    # user = User.objects.create_user(username=request.REQUEST.get('name', None),
-    #                                 email=request.REQUEST.get('email', None))
-    # user.save()
-    pass
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        email = request.POST.get('email')
+        password = make_password(request.POST.get('password'))
+        user = EmployeeLogin(name=name, email=email, password=password)
+        if user:
+            user.save()
+            return JsonResponse({'Success': 'Employee Profile Created!'})
+        return JsonResponse({"Error": "Invalid request method"})
