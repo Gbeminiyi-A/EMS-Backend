@@ -1,5 +1,24 @@
 import django.utils.timezone
 from django.db import models
+from django.contrib.auth.hashers import PBKDF2PasswordHasher
+
+STATUS = {
+    'Active': 'ACTIVE',
+    'Sick': 'SICK',
+    'Leave': 'LEAVE',
+    'Resigned': 'RESIGNED'
+}
+
+ROLE = {
+    'Admin': 'ADMIN',
+    'Employee': 'EMPLOYEE'
+}
+
+
+class EmployeeLogin(models.Model):
+    name = models.CharField(max_length=500)
+    email = models.EmailField(unique=True)
+    password = models.CharField(max_length=200)
 
 
 class Employee(models.Model):
@@ -7,12 +26,14 @@ class Employee(models.Model):
     email = models.CharField(max_length=200, unique=True, default="@gmail.com")
     gender = models.CharField(max_length=200, default="Female")
     marital_status = models.CharField(max_length=200, default="Single")
-    date_joined = models.DateTimeField(default=django.utils.timezone.now())
+    date_joined = models.DateField(auto_now_add=True)
     highest_education = models.CharField(max_length=500, default="College")
     skills = models.TextField(default="Python")
     manager = models.CharField(max_length=500, default="Gbeminiyi A.")
     designation = models.CharField(max_length=500, default="None")
     phone_number = models.CharField(max_length=200, default=00000000000)
+    status = models.CharField(max_length=200, choices=STATUS, default="Active")
+    role = models.CharField(max_length=200, choices=ROLE, default="Employee")
 
     def __str__(self):
         return self.name
@@ -29,8 +50,8 @@ class Projects(models.Model):
     required_resources = models.CharField(max_length=200)
     budget = models.DecimalField(max_digits=20, decimal_places=3, default=0)
     project_manager = models.CharField(max_length=200)
-    start_date = models.DateTimeField(default=django.utils.timezone.now())
-    end_date = models.DateTimeField(default=django.utils.timezone.now())
+    start_date = models.DateField(auto_now_add=True)
+    end_date = models.DateField(auto_now_add=True)
 
     def __str__(self):
         return self.project_name
@@ -54,3 +75,5 @@ class Benefits(models.Model):
 
     def __str__(self):
         return self.user_id.name
+
+

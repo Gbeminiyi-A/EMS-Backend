@@ -5,9 +5,12 @@ from .models import Benefits
 from .serializers import EmployeeSerializer
 from .serializers import ProjectSerializer
 from .serializers import BenefitsSerializer
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework import status
 from rest_framework.response import Response
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework.permissions import IsAuthenticated
+from django.contrib.auth.models import User
 
 
 @api_view(['GET', 'POST'])
@@ -82,6 +85,8 @@ def employeeDetail_view(request, pk, format=None):
 
 
 @api_view(['GET', 'POST'])
+@authentication_classes([SessionAuthentication, BasicAuthentication])
+@permission_classes([IsAuthenticated])
 def benefitslist_view(request):
     if request.method == 'GET':
         benefits = Benefits.objects.all()
@@ -112,3 +117,10 @@ def benefitdetail_view(request, pk):
     elif request.method == 'DELETE':
         benefit.delete()
         return JsonResponse({'Success': 'Benefit has been deleted'})
+
+
+def createUser(request):
+    # user = User.objects.create_user(username=request.REQUEST.get('name', None),
+    #                                 email=request.REQUEST.get('email', None))
+    # user.save()
+    pass
