@@ -9,20 +9,6 @@ STATUS = {
     'Resigned': 'RESIGNED'
 }
 
-ROLE = {
-    'Admin': 'ADMIN',
-    'Employee': 'EMPLOYEE'
-}
-
-
-class EmployeeLogin(models.Model):
-    name = models.CharField(max_length=500, null=False)
-    email = models.EmailField(unique=True, null=False)
-    password = models.CharField(max_length=200, null=False)
-
-    def __str__(self):
-        return self.name
-
 
 class Employee(models.Model):
     name = models.CharField(max_length=500)
@@ -36,7 +22,6 @@ class Employee(models.Model):
     designation = models.CharField(max_length=500, default="None")
     phone_number = models.CharField(max_length=200, default=00000000000)
     status = models.CharField(max_length=200, choices=STATUS, default="Active")
-    role = models.CharField(max_length=200, choices=ROLE, default="Employee")
 
     def __str__(self):
         return self.name

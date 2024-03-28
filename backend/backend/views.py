@@ -2,7 +2,6 @@ from django.http import JsonResponse
 from .models import Employee
 from .models import Projects
 from .models import Benefits
-from .models import EmployeeLogin
 from .serializers import EmployeeSerializer
 from .serializers import ProjectSerializer
 from .serializers import BenefitsSerializer
@@ -10,6 +9,8 @@ from rest_framework.decorators import api_view
 from rest_framework import status
 from rest_framework.response import Response
 from django.contrib.auth.hashers import make_password
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.models import User
 
 
 @api_view(['GET', 'POST'])
@@ -17,14 +18,19 @@ def employeeList_view(request):
     # get all the drinks
     # serialize them
     # return json
-    if request.method == 'GET':
-        employees = Employee.objects.all()
-        serializer = EmployeeSerializer(employees, many=True)
-        return JsonResponse({'employees': serializer.data}, )
-    serializer = EmployeeSerializer(data=request.data)
-    if serializer.is_valid():
-        serializer.save()
-        return JsonResponse({'employees': serializer.data})
+    user = authenticate(email=request.POST.get('email'), password=request.POST.get('password'))
+    if user is not None:
+        login(request, user)
+        if request.method == 'GET':
+            employees = Employee.objects.all()
+            serializer = EmployeeSerializer(employees, many=True)
+            return JsonResponse({'employees': serializer.data}, )
+        serializer = EmployeeSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse({'employees': serializer.data})
+    else:
+        return JsonResponse({"error": "You need to be logged in to access this data"})
 
 
 @api_view(['GET', 'POST'])
@@ -121,8 +127,6 @@ def createUser(request):
         name = request.POST.get('name')
         email = request.POST.get('email')
         password = make_password(request.POST.get('password'))
-        user = EmployeeLogin(name=name, email=email, password=password)
+        user = User(name=name, email=email, password=password)
         if user:
             user.save()
-            return JsonResponse({'Success': 'Employee Profile Created!'})
-        return JsonResponse({"Error": "Invalid request method"})
