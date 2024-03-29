@@ -9,7 +9,7 @@ from rest_framework.decorators import api_view
 from rest_framework import status
 from rest_framework.response import Response
 from django.contrib.auth.hashers import make_password
-from django.contrib.auth import authenticate, login, alogin
+from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 
@@ -43,6 +43,7 @@ def employeeList_view(request):
 
 
 @api_view(['GET', 'POST'])
+@login_required
 def projectList_view(request):
     if request.method == 'GET':
         projects = Projects.objects.all()
@@ -55,6 +56,7 @@ def projectList_view(request):
 
 
 @api_view(['GET', 'PUT', 'DELETE'])
+@login_required
 def projectDetail_view(request, project_id):
     """ Use project id to get the details of the project. If by any chance two projects have the same project id(
     which should not be possible) only the first project in the db is edited and or deleted"""
@@ -78,6 +80,7 @@ def projectDetail_view(request, project_id):
 
 
 @api_view(['GET', 'PUT', 'DELETE'])
+@login_required
 def employeeDetail_view(request, pk, format=None):
     try:
         employee = Employee.objects.get(pk=pk)
@@ -99,6 +102,7 @@ def employeeDetail_view(request, pk, format=None):
 
 
 @api_view(['GET', 'POST'])
+@login_required
 def benefitslist_view(request):
     if request.method == 'GET':
         benefits = Benefits.objects.all()
@@ -111,6 +115,7 @@ def benefitslist_view(request):
 
 
 @api_view(['GET', 'PUT', 'DELETE'])
+@login_required
 def benefitdetail_view(request, pk):
     try:
         benefit = Benefits.objects.filter(pk=pk)
