@@ -9,28 +9,37 @@ from rest_framework.decorators import api_view
 from rest_framework import status
 from rest_framework.response import Response
 from django.contrib.auth.hashers import make_password
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, alogin
 from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
+
+
+def login_view(request):
+    if request.method == 'POST':
+        username = request.POST.get('name')
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        user = authenticate(request,username=username, email=email, password=password)
+        if user is not None:
+            login(request, user)
+            return JsonResponse({'Success': "Login Successful"})
+        return JsonResponse({"Error": 'Try creating an account first'})
 
 
 @api_view(['GET', 'POST'])
+@login_required
 def employeeList_view(request):
     # get all the drinks
     # serialize them
     # return json
-    user = authenticate(email=request.POST.get('email'), password=request.POST.get('password'))
-    if user is not None:
-        login(request, user)
-        if request.method == 'GET':
-            employees = Employee.objects.all()
-            serializer = EmployeeSerializer(employees, many=True)
-            return JsonResponse({'employees': serializer.data}, )
-        serializer = EmployeeSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return JsonResponse({'employees': serializer.data})
-    else:
-        return JsonResponse({"error": "You need to be logged in to access this data"})
+    if request.method == 'GET':
+        employees = Employee.objects.all()
+        serializer = EmployeeSerializer(employees, many=True)
+        return JsonResponse({'employees': serializer.data}, )
+    serializer = EmployeeSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return JsonResponse({'employees': serializer.data})
 
 
 @api_view(['GET', 'POST'])
@@ -124,9 +133,12 @@ def benefitdetail_view(request, pk):
 
 def createUser(request):
     if request.method == 'POST':
-        name = request.POST.get('name')
+        username = request.POST.get('name')
+        first_name = request.POST.get('name')
         email = request.POST.get('email')
         password = make_password(request.POST.get('password'))
-        user = User(name=name, email=email, password=password)
+        user = User(username=username, first_name=first_name, email=email, password=password)
         if user:
             user.save()
+            return JsonResponse({'Success': 'User created successfully!'})
+        return JsonResponse({'Error', 'Check your details and try changing your username'})

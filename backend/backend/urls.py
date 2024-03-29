@@ -23,6 +23,7 @@ from .views import benefitslist_view
 from .views import projectDetail_view
 from .views import benefitdetail_view
 from .views import createUser
+from .views import login_view
 from rest_framework.urlpatterns import format_suffix_patterns
 
 urlpatterns = [
@@ -34,6 +35,7 @@ urlpatterns = [
     path('project/<int:project_id>', projectDetail_view),
     path('benefit/<int:pk>', benefitdetail_view),
     path('create/', createUser),
+    path('login/', login_view),
 ]
 
 
