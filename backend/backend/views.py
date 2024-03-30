@@ -12,6 +12,7 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
 
 
 def login_view(request):
@@ -19,7 +20,7 @@ def login_view(request):
         username = request.POST.get('name')
         email = request.POST.get('email')
         password = request.POST.get('password')
-        user = authenticate(request,username=username, email=email, password=password)
+        user = authenticate(request, username=username, email=email, password=password)
         if user is not None:
             login(request, user)
             return JsonResponse({'Success': "Login Successful"})
@@ -44,15 +45,20 @@ def employeeList_view(request):
 
 @api_view(['GET', 'POST'])
 @login_required
+@csrf_exempt
 def projectList_view(request):
     if request.method == 'GET':
         projects = Projects.objects.all()
         serializer = ProjectSerializer(projects, many=True)
         return JsonResponse({'projects': serializer.data})
-    serializer = ProjectSerializer(data=request.data)
-    if serializer.is_valid():
-        serializer.save()
-        return JsonResponse({'project': serializer.data})
+    elif request.method == 'POST':
+        if request.user.email.endswith('@admin.com'):
+            serializer = ProjectSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return JsonResponse({'project': serializer.data})
+        else:
+            return JsonResponse({'Error': 'You do not have access to add a project'})
 
 
 @api_view(['GET', 'PUT', 'DELETE'])
@@ -143,7 +149,12 @@ def createUser(request):
         email = request.POST.get('email')
         password = make_password(request.POST.get('password'))
         user = User(username=username, first_name=first_name, email=email, password=password)
-        if user:
+        if '@admin.com' in email:
+            user.is_staff = True
+            user.save()
+            return JsonResponse({'Success': 'User created successfully!'})
+        elif user:
             user.save()
             return JsonResponse({'Success': 'User created successfully!'})
         return JsonResponse({'Error', 'Check your details and try changing your username'})
+
