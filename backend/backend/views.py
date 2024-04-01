@@ -5,14 +5,13 @@ from .models import Benefits
 from .serializers import EmployeeSerializer
 from .serializers import ProjectSerializer
 from .serializers import BenefitsSerializer
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, authentication_classes
 from rest_framework import status
 from rest_framework.response import Response
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-from django.views.decorators.csrf import csrf_exempt
 
 
 def login_view(request):
@@ -24,7 +23,7 @@ def login_view(request):
         if user is not None:
             login(request, user)
             return JsonResponse({'Success': "Login Successful"})
-        return JsonResponse({"Error": 'Try creating an account first'})
+        return JsonResponse({"Error": 'Try checking your login details or creating an account first'})
 
 
 @api_view(['GET', 'POST'])
@@ -45,13 +44,12 @@ def employeeList_view(request):
 
 @api_view(['GET', 'POST'])
 @login_required
-@csrf_exempt
 def projectList_view(request):
     if request.method == 'GET':
         projects = Projects.objects.all()
         serializer = ProjectSerializer(projects, many=True)
         return JsonResponse({'projects': serializer.data})
-    elif request.method == 'POST':
+    if request.method == 'POST':
         if request.user.email.endswith('@admin.com'):
             serializer = ProjectSerializer(data=request.data)
             if serializer.is_valid():
@@ -99,12 +97,12 @@ def employeeDetail_view(request, pk, format=None):
         serializer = EmployeeSerializer(employee, request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data, status.HTTP_202_ACCEPTED)
-        return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
+            return JsonResponse({'Employee': serializer.data})
+        return JsonResponse(serializer.errors, status.HTTP_400_BAD_REQUEST)
 
     elif request.method == 'DELETE':
         employee.delete()
-        return Response(status.HTTP_204_NO_CONTENT)
+        return JsonResponse({'Success': 'The employee detail has been deleted'})
 
 
 @api_view(['GET', 'POST'])
@@ -148,13 +146,16 @@ def createUser(request):
         first_name = request.POST.get('name')
         email = request.POST.get('email')
         password = make_password(request.POST.get('password'))
-        user = User(username=username, first_name=first_name, email=email, password=password)
-        if '@admin.com' in email:
-            user.is_staff = True
-            user.save()
-            return JsonResponse({'Success': 'User created successfully!'})
-        elif user:
-            user.save()
-            return JsonResponse({'Success': 'User created successfully!'})
-        return JsonResponse({'Error', 'Check your details and try changing your username'})
+        if email and password:
+            if User.objects.get(email=email).exist():
+                return JsonResponse({'Error', 'Email already exists'})
+            user = User(username=username, first_name=first_name, email=email, password=password)
+            if '@admin.com' in email:
+                user.is_staff = True
+                user.save()
+                return JsonResponse({'Success': 'User created successfully!'})
+            elif user:
+                user.save()
+                return JsonResponse({'Success': 'User created successfully!'})
+            return JsonResponse({'Error', 'Check your details and try changing your username'})
 
