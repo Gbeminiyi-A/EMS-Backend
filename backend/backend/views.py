@@ -12,6 +12,11 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
+from django.http.response import HttpResponse
+
+
+def home_view(request):
+    return HttpResponse("Hello there!")
 
 
 def login_view(request):

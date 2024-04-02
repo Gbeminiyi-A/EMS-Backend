@@ -22,12 +22,14 @@ from .views import employeeDetail_view
 from .views import benefitslist_view
 from .views import projectDetail_view
 from .views import benefitdetail_view
+from .views import home_view
 from .views import createUser
 from .views import login_view
 from rest_framework.urlpatterns import format_suffix_patterns
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', home_view),
     path('employees/', employeeList_view),
     path('projects/', projectList_view),
     path('employees/<int:pk>/', employeeDetail_view),
