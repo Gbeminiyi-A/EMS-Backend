@@ -32,7 +32,7 @@ def login_view(request):
 
 
 @api_view(['GET', 'POST'])
-@login_required
+# @login_required
 def employeeList_view(request):
     # get all the drinks
     # serialize them
@@ -48,7 +48,7 @@ def employeeList_view(request):
 
 
 @api_view(['GET', 'POST'])
-@login_required
+# @login_required
 def projectList_view(request):
     if request.method == 'GET':
         projects = Projects.objects.all()
@@ -65,7 +65,7 @@ def projectList_view(request):
 
 
 @api_view(['GET', 'PUT', 'DELETE'])
-@login_required
+# @login_required
 def projectDetail_view(request, project_id):
     """ Use project id to get the details of the project. If by any chance two projects have the same project id(
     which should not be possible) only the first project in the db is edited and or deleted"""
@@ -89,7 +89,7 @@ def projectDetail_view(request, project_id):
 
 
 @api_view(['GET', 'PUT', 'DELETE'])
-@login_required
+# @login_required
 def employeeDetail_view(request, pk, format=None):
     try:
         employee = Employee.objects.get(pk=pk)
@@ -111,7 +111,7 @@ def employeeDetail_view(request, pk, format=None):
 
 
 @api_view(['GET', 'POST'])
-@login_required
+# @login_required
 def benefitslist_view(request):
     if request.method == 'GET':
         benefits = Benefits.objects.all()
@@ -124,7 +124,7 @@ def benefitslist_view(request):
 
 
 @api_view(['GET', 'PUT', 'DELETE'])
-@login_required
+# @login_required
 def benefitdetail_view(request, pk):
     try:
         benefit = Benefits.objects.filter(pk=pk)
