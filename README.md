@@ -96,3 +96,6 @@ This Django application provides RESTful API endpoints for managing employees, p
     - Error: `{ "Error": "Email already exists" }`
 
 ---
+
+[Live Here 👈🏾](https://ems-backend-9ojf.onrender.com/)
+- The API may be empty at the moment but it's currently being used on a project so check back soon!
