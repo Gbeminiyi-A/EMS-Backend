@@ -41,10 +41,15 @@ def employeeList_view(request):
         employees = Employee.objects.all()
         serializer = EmployeeSerializer(employees, many=True)
         return JsonResponse({'employees': serializer.data}, )
-    serializer = EmployeeSerializer(data=request.data)
-    if serializer.is_valid():
-        serializer.save()
-        return JsonResponse({'employees': serializer.data})
+    elif request.method == 'POST':
+        email = Employee.objects.filter(email=request.data.get("email")).first()
+        if email:
+            return JsonResponse({'Error': 'Email already exists'})
+        serializer = EmployeeSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse({'employees': serializer.data})
+        return JsonResponse({'Error': 'Data is invalid'})
 
 
 @api_view(['GET', 'POST'])
